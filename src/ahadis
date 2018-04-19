@@ -37,7 +37,7 @@ version_         = "1.0"
 copyright_       = "Copyright © 2018 Youssef Sourani"
 website_         = "https://arfedora.blogspot.com"
 translators_     = ("translator-credit")
-translators_id   = "ahadis"
+translators_id   = "Ahadis"
 appname          = "ahadis"
 appwindowtitle   = "Ahadis"
 appid            = "com.github.yucefsourani.ahadis.Ahadis"
@@ -50,6 +50,7 @@ if os.path.dirname(os.path.abspath(__file__)) == "/usr/bin":
     gettext.install(translators_id,"/usr/share/locale")
 else:
     gettext.install(translators_id,os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"locale"))
+    print(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"locale"))
 comments_      = _("Ahadis")
 
 
