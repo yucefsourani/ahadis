@@ -1,0 +1,357 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#
+#  ahadis.py
+#  
+#  Copyright 2018 youcef sourani <youssef.m.sourani@gmail.com>
+#  
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  
+#  
+
+import gi
+gi.require_version("Gtk","3.0")
+from gi.repository import Gtk, GdkPixbuf, Gio, Pango, Gdk
+import gettext
+import sys
+import json
+import os
+
+
+
+authors_         = ["Youssef Sourani <youssef.m.sourani@gmail.com>"]
+version_         = "1.0"
+copyright_       = "Copyright © 2018 Youssef Sourani"
+website_         = "https://arfedora.blogspot.com"
+translators_     = ("translator-credit")
+translators_id   = "ahadis"
+appname          = "ahadis"
+appwindowtitle   = "Ahadis"
+appid            = "org.github.yucefsourani.Ahadis"
+iconname         = "org.github.yucefsourani.Ahadis.png"
+icon_            = [icon for icon in [os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"data",iconname),"/usr/share/pixmaps/{}".format(iconname)] if os.path.isfile(icon)]
+plugins_location = [plugins_folder for plugins_folder in [os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"data/plugins"),"/usr/share/{}/data/plugins".format(appname)] if os.path.isdir(plugins_folder)]
+
+
+if os.path.dirname(os.path.abspath(__file__)) == "/usr/bin":
+    gettext.install(translators_id,"/usr/share/locale")
+else:
+    gettext.install(translators_id,os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"locale"))
+comments_      = _("Ahadis")
+
+
+MENU_XML="""
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="app-menu">
+    <section>
+      <item>
+        <attribute name="action">app.about</attribute>
+        <attribute name="label" translatable="yes">_About</attribute>
+      </item>
+      <item>
+        <attribute name="action">app.quit</attribute>
+        <attribute name="label" translatable="yes">_Quit</attribute>
+        <attribute name="accel">&lt;Primary&gt;q</attribute>
+    </item>
+    </section>
+  </menu>
+</interface>
+"""
+
+
+
+
+
+class AppWindow(Gtk.ApplicationWindow):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if icon_:
+            self.set_icon(GdkPixbuf.Pixbuf.new_from_file(icon_[0]))
+        #self.maximize()
+        self.set_default_size(800, 400)
+        self.connect("key-press-event", self._on_key_press)
+            
+            
+        self.vbox = Gtk.VBox()
+        self.searchvbox = Gtk.VBox()
+        self.revealer = Gtk.Revealer()
+        hboxrevealer = Gtk.HBox()
+        
+        self.entry = Gtk.SearchEntry(placeholder_text="Search...")
+        self.entry.set_max_width_chars(10)
+        self.entry.props.margin_left = 15
+        self.entry.props.margin_right = 15
+        self.entry.props.margin_top = 5
+        self.entry.props.margin_bottom = 5
+        self.entry.connect("search-changed", self._on_search)
+        hboxrevealer.pack_start(self.revealer,True,False,0)
+        self.revealer.add(self.entry)
+        
+        self.scrolledwindow2 = Gtk.ScrolledWindow()
+        self.scrolledwindow2.set_hexpand(True)
+        self.scrolledwindow2.set_vexpand(True)
+        self.listbox = Gtk.ListBox()
+        self.listbox.connect("row-activated",self.on_activated_row)
+        self.listbox.set_selection_mode(Gtk.SelectionMode(2))
+        self.listbox.set_filter_func(self._list_filter_func, None)
+            
+        self.all_desc = dict()
+        self.completion_liststore = Gtk.ListStore(str)
+            
+            
+        # Header Bar
+        self.header=Gtk.HeaderBar()
+        #self.header.set_decoration_layout("menu:minimize,maximize,close")
+        self.header.set_title(self.get_title())
+        self.header.set_show_close_button(True)
+        self.headerhbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=5)
+        self.header.pack_start(self.headerhbox)
+        self.set_titlebar(self.header)
+            
+            
+            
+        # Combo Box Text
+        self.hadis_combo = Gtk.ComboBoxText.new()
+        self.hadis_combo.set_wrap_width(5)
+        self.hadis_combo.set_tooltip_text(_("Choose a Hadis"))
+        self.hadis_combo.connect("changed", self.hadis_combo_changed)
+            
+        # Scrolle Window
+        self.scrolledwindow = Gtk.ScrolledWindow()
+        self.scrolledwindow.set_hexpand(True)
+        self.scrolledwindow.set_vexpand(True)
+            
+            
+        self.entrycompletion = Gtk.EntryCompletion()
+        self.entrycompletion.set_text_column(0)
+        self.entry.set_completion(self.entrycompletion)
+            
+            
+        # Text View
+        self.textview = Gtk.TextView()
+        self.textview.set_direction(Gtk.TextDirection.RTL)
+        self.textview.set_editable(False)
+        self.textview.set_cursor_visible(False)
+        self.textview.set_wrap_mode(Gtk.WrapMode(3))
+        self.textview.set_right_margin(40)
+        self.textview.set_left_margin(40)
+        self.textview.set_top_margin(100)
+
+        self.textbuffer = self.textview.get_buffer()
+
+            
+            
+        #self.tag_bold = self.textbuffer.create_tag("bold",
+        #weight=Pango.Weight.BOLD)
+            
+        #self.tag_italic = self.textbuffer.create_tag("italic",
+        #style=Pango.Style.ITALIC)
+            
+        #self.tag_underline = self.textbuffer.create_tag("underline",
+         #underline=Pango.Underline.SINGLE)
+            
+
+
+            
+        # Add Widgets To Header Bar
+        self.headerhbox.pack_start(Gtk.Label(_("Hadis")), False, False, 0)
+        self.headerhbox.pack_start(self.hadis_combo,True,True,0)
+            
+            
+        self.scrolledwindow2.add(self.listbox)
+        self.scrolledwindow.add(self.textview)
+        self.searchvbox.pack_start(hboxrevealer,False,False,0)
+        self.searchvbox.pack_start(self.scrolledwindow2,True,True,0)
+        self.vbox.pack_start(self.scrolledwindow,True,True,0)
+        self.add(self.vbox)
+            
+        self.read_all_desc_plugin_and_apply()
+            
+        self.show_all()
+            
+    
+    def hadis_combo_changed(self,combo):
+        hadis = self.all_desc[combo.get_active_text()][0]
+        with open(hadis,encoding="utf-8") as mf:
+            hadis_tags = name = json.load(mf)
+            self.textbuffer.delete(self.textbuffer.get_start_iter(),self.textbuffer.get_end_iter())
+            self.textbuffer.insert_markup(self.textbuffer.get_start_iter(), hadis_tags["hadis"],-1) #https://developer.gnome.org/pango/stable/PangoMarkupFormat.html
+            #self.textbuffer.set_text(hadis_tags["hadis"])
+            #start,end = self.textbuffer.get_bounds()
+            #self.textbuffer.apply_tag(self.tag_bold,start,end)
+
+
+
+    def search_and_mark(self, text, start):
+        end = self.textbuffer.get_end_iter()
+        match = start.forward_search(text, 0, end)
+
+        if match is not None:
+            match_start, match_end = match
+            self.textbuffer.apply_tag(self.tag_found, match_start, match_end)
+            self.search_and_mark(text, match_end)
+            
+    
+    def read_all_desc_plugin_and_apply(self):
+        if not plugins_location:
+            return
+        count = 1
+        plugins_l = plugins_location[0]
+        for location in os.listdir(plugins_l):
+            location = os.path.join(plugins_l,location)
+            if os.path.isdir(location):
+                desc  = os.path.join(location,"desc.json")
+                hadis = os.path.join(location,"hadis.json" )
+                if os.path.isfile(desc) and os.path.isfile(hadis):
+                    with open(desc,encoding="utf-8") as mf:
+                        name_tags = json.load(mf)
+                        name = str(count)+"-"+name_tags["name"]
+                        tags = name_tags["tags"]
+                        self.all_desc.setdefault(name,[hadis,tags,count-1])
+                        self.hadis_combo.append_text(name)
+                        count+=1
+                        for tag in tags:
+                            self.completion_liststore.append([tag])
+                            
+                        row = Gtk.ListBoxRow(activatable=True)
+                        self.listbox.insert(row,-1)
+                        label  = Gtk.Label(name)
+                        label.set_line_wrap(True)
+                        label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR )
+                        row.add(label)
+
+        if self.all_desc:
+            self.entrycompletion.set_model(self.completion_liststore)
+            self.hadis_combo.set_active(0)
+
+
+
+    def _on_key_press(self, widget, event):
+        keyname = Gdk.keyval_name(event.keyval)        
+        if keyname == 'Escape':
+                if self.get_child () != self.vbox:
+                    self.header.pack_start(self.headerhbox)
+                    self.revealer.set_reveal_child(False)
+                    self.entry.set_text("") 
+                    self.remove(self.searchvbox)
+                    self.add(self.vbox)
+                    self.show_all()
+
+
+        if event.state==Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.MOD2_MASK :
+            if keyname == 'f' or  keyname == 'Arabic_beh':
+                if self.get_child () == self.vbox:
+                    self.header.remove(self.headerhbox)
+                    self.remove(self.vbox)
+                    self.add(self.searchvbox)
+                    self.show_all()
+                else:
+                    self.header.pack_start(self.headerhbox)
+                    self.remove(self.searchvbox)
+                    self.add(self.vbox)
+                    self.show_all()
+
+                if self.revealer.get_reveal_child():
+                    self.revealer.set_reveal_child(False)
+                    self.entry.set_text("") 
+                else:
+                    self.revealer.set_reveal_child(True)
+
+    def _on_search(self, entry):
+        self.listbox.invalidate_filter()
+
+    def _list_filter_func(self, lista, user_data):
+        text = self.entry.get_text()
+        if not text:
+            return lista
+        lbl = lista.get_child()
+        text = text.lower()
+        l = lbl.get_text().lower()
+        tags = self.all_desc[lbl.get_text().lower()][-2]
+        if text in l or any([tag for tag in tags if tag.lower() in text ]):
+            return lista 
+
+
+    def on_activated_row(self, listbox,listboxrow):
+        lbl = listboxrow.get_child()
+        index = self.all_desc[lbl.get_text().lower()][-1]
+        self.hadis_combo.set_active(index)
+        if self.get_child () != self.vbox:
+            self.header.pack_start(self.headerhbox)
+            self.revealer.set_reveal_child(False)
+            self.entry.set_text("") 
+            self.remove(self.searchvbox)
+            self.add(self.vbox)
+            self.show_all()
+        
+
+
+class AppAhadis(Gtk.Application):
+    def __init__(self ,*args, **kwargs):
+        super().__init__(
+        application_id=appid,
+        flags=Gio.ApplicationFlags.FLAGS_NONE,
+        **kwargs
+        )
+        self.appwindow = None
+        
+    def do_startup(self):
+        Gtk.Application.do_startup(self)
+        action = Gio.SimpleAction.new("about", None)
+        action.connect("activate", self.on_about)
+        self.add_action(action)
+        action = Gio.SimpleAction.new("quit", None)
+        action.connect("activate", self.on_quit)
+        self.add_action(action)
+        builder = Gtk.Builder.new_from_string(MENU_XML, -1)
+        self.set_app_menu(builder.get_object("app-menu"))
+        
+    def do_activate(self):
+        if not self.appwindow:
+            self.appwindow = AppWindow(application=self, title=appwindowtitle)
+        self.appwindow.present()
+
+    def on_quit(self, action, param):
+        self.quit()
+
+    def on_about(self,a,p):
+        about = Gtk.AboutDialog(parent=self.appwindow,transient_for=self.appwindow, modal=True)
+        about.set_program_name("Ahadis")
+        about.set_version(version_)
+        about.set_copyright(copyright_)
+        about.set_comments(comments_)
+        about.set_website(website_)
+        if icon_:
+            logo_=GdkPixbuf.Pixbuf.new_from_file(icon_[0])
+            about.set_logo(logo_)
+        about.set_authors(authors_)
+        about.set_license_type(Gtk.License.GPL_3_0)
+        if translators_ != "translator-credits":
+            about.set_translator_credits(translators_)
+        about.run()
+        about.destroy()
+
+
+if __name__ == "__main__":
+    apphadis = AppAhadis()
+    apphadis.run(sys.argv)
+
+
+
+
+
