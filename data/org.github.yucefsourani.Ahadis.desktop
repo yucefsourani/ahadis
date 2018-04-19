@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Ahadis
+GenericName=Ahadis
+Terminal=false
+TryExec=ahadis
+Exec=ahadis
+Icon=org.github.yucefsourani.Ahadis.png
+Categories=Education;Literature;GTK;
+StartupNotify=false

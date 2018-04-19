@@ -92,7 +92,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.revealer = Gtk.Revealer()
         hboxrevealer = Gtk.HBox()
         
-        self.entry = Gtk.SearchEntry(placeholder_text="Search...")
+        self.entry = Gtk.SearchEntry(placeholder_text=_("Search..."))
         self.entry.set_max_width_chars(10)
         self.entry.props.margin_left = 15
         self.entry.props.margin_right = 15
@@ -226,7 +226,8 @@ class AppWindow(Gtk.ApplicationWindow):
                         self.hadis_combo.append_text(name)
                         count+=1
                         for tag in tags:
-                            self.completion_liststore.append([tag])
+                            if tag:
+                                self.completion_liststore.append([tag])
                             
                         row = Gtk.ListBoxRow(activatable=True)
                         self.listbox.insert(row,-1)
@@ -247,7 +248,7 @@ class AppWindow(Gtk.ApplicationWindow):
                 if self.get_child () != self.vbox:
                     self.header.pack_start(self.headerhbox)
                     self.revealer.set_reveal_child(False)
-                    self.entry.set_text("") 
+                    #self.entry.set_text("") 
                     self.remove(self.searchvbox)
                     self.add(self.vbox)
                     self.show_all()
@@ -268,7 +269,7 @@ class AppWindow(Gtk.ApplicationWindow):
 
                 if self.revealer.get_reveal_child():
                     self.revealer.set_reveal_child(False)
-                    self.entry.set_text("") 
+                    #self.entry.set_text("") 
                 else:
                     self.revealer.set_reveal_child(True)
 
@@ -294,7 +295,7 @@ class AppWindow(Gtk.ApplicationWindow):
         if self.get_child () != self.vbox:
             self.header.pack_start(self.headerhbox)
             self.revealer.set_reveal_child(False)
-            self.entry.set_text("") 
+            #self.entry.set_text("") 
             self.remove(self.searchvbox)
             self.add(self.vbox)
             self.show_all()

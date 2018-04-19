@@ -38,9 +38,9 @@ testing on ubuntu arch ...
  
   * ``` cd && git clone https://github.com/yucefsourani/ahadis ```
 
-  * ``` chmod 755 ~/ahadis/src/ahadis.py ```
+  * ``` chmod 755 ~/ahadis/src/ahadis ```
   
-  * ``` ~/ahadis/src/ahadis.py ```
+  * ``` ~/ahadis/src/ahadis ```
 
 
 
