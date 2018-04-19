@@ -40,8 +40,8 @@ translators_     = ("translator-credit")
 translators_id   = "ahadis"
 appname          = "ahadis"
 appwindowtitle   = "Ahadis"
-appid            = "org.github.yucefsourani.Ahadis"
-iconname         = "org.github.yucefsourani.Ahadis.png"
+appid            = "com.github.yucefsourani.ahadis.Ahadis"
+iconname         = "com.github.yucefsourani.ahadis.Ahadis.png"
 icon_            = [icon for icon in [os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"data",iconname),"/usr/share/pixmaps/{}".format(iconname)] if os.path.isfile(icon)]
 plugins_location = [plugins_folder for plugins_folder in [os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"data/plugins"),"/usr/share/{}/data/plugins".format(appname)] if os.path.isdir(plugins_folder)]
 
