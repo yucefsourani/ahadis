@@ -8,5 +8,3 @@ Exec=ahadis
 Icon=com.github.yucefsourani.ahadis.Ahadis.png
 Categories=Education;Literature;GTK;
 StartupNotify=false
-
-Name[en_US]=com.github.yucefsourani.ahadis.Ahadis.desktop
