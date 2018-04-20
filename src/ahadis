@@ -50,7 +50,7 @@ if os.path.dirname(os.path.abspath(__file__)) == "/usr/bin":
     gettext.install(translators_id,"/usr/share/locale")
 else:
     gettext.install(translators_id,os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"locale"))
-    print(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"locale"))
+
 comments_      = _("Ahadis")
 
 
@@ -128,7 +128,7 @@ class AppWindow(Gtk.ApplicationWindow):
             
         # Combo Box Text
         self.hadis_combo = Gtk.ComboBoxText.new()
-        self.hadis_combo.set_wrap_width(5)
+        self.hadis_combo.set_wrap_width(3)
         self.hadis_combo.set_tooltip_text(_("Choose a Hadis"))
         self.hadis_combo.connect("changed", self.hadis_combo_changed)
             
@@ -182,7 +182,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.add(self.vbox)
             
         self.read_all_desc_plugin_and_apply()
-            
+        self.set_default_direction(Gtk.TextDirection.RTL)
         self.show_all()
             
     

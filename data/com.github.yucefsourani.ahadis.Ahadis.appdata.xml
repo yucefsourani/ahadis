@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2018 Youssef Sourani <youssef.m.sourani@gmail.com> -->
+<component type="desktop">
+  <id>com.github.yucefsourani.ahadis.Ahadis</id>
+  <pkgname>ahadis</pkgname>
+  <metadata_license>CC0-1.0</metadata_license>
+  <name>Ahadis</name>
+  <name xml:lang="ar">أحاديث نبوية</name>
+  <summary>Ahadis Nabawiya</summary>
+  <summary xml:lang="ar">أحاديث</summary>
+  <description xml:lang="ar"><p>أحاديث نبوية صحيحة من عدة مصادر .</p></description>
+    <categories>
+      <category>Education</category>
+      <category>Literature</category>
+  </categories>
+  <keywords>
+    <keyword>hadis</keyword>
+  </keywords>
+  <project_license>GPL-3.0+</project_license>
+  <url type="homepage">https://arfeora.blogspot.com/</url>
+  <url type="translate">https://github.com/yucefsourani/ahadis/tree/master/po</url>
+  <url type="bugtracker">https://github.com/yucefsourani/ahadis/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image type="source">https://raw.githubusercontent.com/yucefsourani/ahadis/master/data/Screenshot%20from%202018-04-19%2003-15-20.jpg</image>
+      <image type="thumbnail">https://raw.githubusercontent.com/yucefsourani/ahadis/master/data/Screenshot%20from%202018-04-19%2003-15-35.jpg</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release timestamp="1524131138" version="1.0"/>
+  </releases>
+  <launchable type="desktop-id">com.github.yucefsourani.ahadis.Ahadis.desktop</launchable>
+  <update_contact>youssef.m.sourani@gmail.com</update_contact>update_contact>
+  <translation type="gettext">Ahadis</translation>
+</component>
+

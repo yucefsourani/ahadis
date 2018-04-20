@@ -31,7 +31,6 @@ testing on ubuntu arch ...
   
   * ``` gtk3 ```
     
-  * ``` gettext #devel ```
 
 
 
