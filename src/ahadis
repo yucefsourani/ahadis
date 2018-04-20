@@ -86,7 +86,7 @@ class AppWindow(Gtk.ApplicationWindow):
         #self.maximize()
         self.set_default_size(800, 400)
         self.connect("key-press-event", self._on_key_press)
-            
+        self.provtags = []
             
         self.vbox = Gtk.VBox()
         self.searchvbox = Gtk.VBox()
@@ -227,7 +227,9 @@ class AppWindow(Gtk.ApplicationWindow):
                         self.hadis_combo.append_text(name)
                         count+=1
                         for tag in tags:
-                            if tag:
+                            tag = tag.strip()
+                            if tag and tag not in self.provtags:
+                                self.provtags.append(tag)
                                 self.completion_liststore.append([tag])
                             
                         row = Gtk.ListBoxRow(activatable=True)

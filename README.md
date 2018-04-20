@@ -1,11 +1,9 @@
 # ahadis
 https://arfedora.blogspot.com
 
+Ctrl+F To Enter And Exit Search. 
+
 # To DO
-Add Config file
-
-New Icon
-
 testing on ubuntu arch ...
 
 
@@ -13,12 +11,11 @@ testing on ubuntu arch ...
 
 # Screenshot
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/ahadis/master/data/Screenshot%20from%202018-04-19%2003-15-20.jpg "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/ahadis/master/data/1.jpg "Screenshot")
 
+![Alt text](https://raw.githubusercontent.com/yucefsourani/ahadis/master/data/2.jpg "Screenshot")
 
-# Screenshot
-
-![Alt text](https://raw.githubusercontent.com/yucefsourani/ahadis/master/data/Screenshot%20from%202018-04-19%2003-15-35.jpg "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/ahadis/master/data/3.jpg "Screenshot")
 
 
 * Requires
