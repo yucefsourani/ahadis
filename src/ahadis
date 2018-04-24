@@ -29,7 +29,7 @@ import gettext
 import sys
 import json
 import os
-
+import platform
 
 
 authors_         = ["Youssef Sourani <youssef.m.sourani@gmail.com>"]
@@ -75,6 +75,7 @@ MENU_XML="""
 
 
 
+osystem = platform.system()
 
 
 class AppWindow(Gtk.ApplicationWindow):
@@ -85,9 +86,11 @@ class AppWindow(Gtk.ApplicationWindow):
             self.set_icon(GdkPixbuf.Pixbuf.new_from_file(icon_[0]))
         #self.maximize()
         self.set_default_size(800, 400)
-        self.connect("key-press-event", self._on_key_press)
+        if osystem!="Windows":
+            self.connect("key-press-event", self._on_key_press)
         self.provtags = []
-            
+        
+
         self.vbox = Gtk.VBox()
         self.searchvbox = Gtk.VBox()
         self.revealer = Gtk.Revealer()
@@ -122,9 +125,14 @@ class AppWindow(Gtk.ApplicationWindow):
         self.header.set_show_close_button(True)
         self.headerhbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=5)
         self.header.pack_start(self.headerhbox)
+        if osystem=="Windows":
+            self.headerhbox2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=5)
+            self.header.pack_end(self.headerhbox2)
+            self.searchbutton = Gtk.Button(_("Search"))
+            self.searchbutton.set_size_request(60,60)
+            self.searchbutton.connect("clicked",self.on_search_button_clicked)
+            self.headerhbox2.add(self.searchbutton)
         self.set_titlebar(self.header)
-            
-            
             
         # Combo Box Text
         self.hadis_combo = Gtk.ComboBoxText.new()
@@ -207,7 +215,27 @@ class AppWindow(Gtk.ApplicationWindow):
             self.textbuffer.apply_tag(self.tag_found, match_start, match_end)
             self.search_and_mark(text, match_end)
             
-    
+    def on_search_button_clicked(self,button):
+        if self.get_child () == self.vbox:
+            button.set_label(_("Back"))
+            self.header.remove(self.headerhbox)
+            self.remove(self.vbox)
+            self.add(self.searchvbox)
+            self.show_all()
+        else:
+            button.set_label(_("Search"))
+            self.header.pack_start(self.headerhbox)
+            self.remove(self.searchvbox)
+            self.add(self.vbox)
+            self.show_all()
+
+        if self.revealer.get_reveal_child():
+            self.revealer.set_reveal_child(False)
+            #self.entry.set_text("") 
+        else:
+            self.revealer.set_reveal_child(True)
+
+
     def read_all_desc_plugin_and_apply(self):
         if not plugins_location:
             return
@@ -296,6 +324,8 @@ class AppWindow(Gtk.ApplicationWindow):
         index = self.all_desc[lbl.get_text().lower()][-1]
         self.hadis_combo.set_active(index)
         if self.get_child () != self.vbox:
+            if osystem=="Windows":
+                self.searchbutton.set_label(_("Search"))
             self.header.pack_start(self.headerhbox)
             self.revealer.set_reveal_child(False)
             #self.entry.set_text("") 
@@ -354,8 +384,3 @@ class AppAhadis(Gtk.Application):
 if __name__ == "__main__":
     apphadis = AppAhadis()
     apphadis.run(sys.argv)
-
-
-
-
-
