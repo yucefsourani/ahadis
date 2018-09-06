@@ -5,6 +5,6 @@ GenericName=Ahadis
 Terminal=false
 TryExec=ahadis
 Exec=ahadis
-Icon=com.github.yucefsourani.Ahadis.png
+Icon=com.github.yucefsourani.Ahadis
 Categories=Education;Literature;GTK;
 StartupNotify=false
