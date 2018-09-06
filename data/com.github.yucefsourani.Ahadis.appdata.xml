@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2018 Youssef Sourani <youssef.m.sourani@gmail.com> -->
 <component type="desktop">
-  <id>com.github.yucefsourani.ahadis.Ahadis</id>
+  <id>com.github.yucefsourani.Ahadis</id>
   <pkgname>ahadis</pkgname>
   <metadata_license>CC0-1.0</metadata_license>
   <name>Ahadis</name>
@@ -29,7 +29,7 @@
   <releases>
     <release timestamp="1524131138" version="1.0"/>
   </releases>
-  <launchable type="desktop-id">com.github.yucefsourani.ahadis.Ahadis.desktop</launchable>
+  <launchable type="desktop-id">com.github.yucefsourani.Ahadis.desktop</launchable>
   <update_contact>youssef.m.sourani@gmail.com</update_contact>update_contact>
   <translation type="gettext">Ahadis</translation>
 </component>
