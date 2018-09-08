@@ -274,7 +274,7 @@ class AppWindow(Gtk.ApplicationWindow):
 
 
     def _on_key_press(self, widget, event):
-        keyname = Gdk.keyval_name(event.keyval)        
+        keyname = Gdk.keyval_name(event.keyval)
         if keyname == 'Escape':
                 if self.get_child () != self.vbox:
                     self.header.pack_start(self.headerhbox)
@@ -284,8 +284,9 @@ class AppWindow(Gtk.ApplicationWindow):
                     self.add(self.vbox)
                     self.show_all()
 
-
-        if event.state==Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.MOD2_MASK :
+        print(type(event.state))
+        if event.state==Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.CONTROL_MASK :
+            print("ok")
             if keyname == 'f' or  keyname == 'Arabic_beh':
                 if self.get_child () == self.vbox:
                     self.header.remove(self.headerhbox)
