@@ -284,9 +284,8 @@ class AppWindow(Gtk.ApplicationWindow):
                     self.add(self.vbox)
                     self.show_all()
 
-        print(type(event.state))
+
         if event.state==Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.CONTROL_MASK :
-            print("ok")
             if keyname == 'f' or  keyname == 'Arabic_beh':
                 if self.get_child () == self.vbox:
                     self.header.remove(self.headerhbox)
